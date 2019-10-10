@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './home_list.dart';
+import './topic.dart';
 
 void main() => runApp(Myapp());
 
@@ -12,6 +13,7 @@ class Myapp extends StatelessWidget{
       initialRoute: "/",
       routes: {
         "/": (context) => Home(),
+        "/Topic": (context) => Topic()
       },
     );
   }

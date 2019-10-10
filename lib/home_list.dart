@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class HomeList extends StatefulWidget{
+class HomeList extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return HomeListState();
   }
 }
 
-class HomeListState extends State<HomeList>{
+class HomeListState extends State<HomeList> {
   int _page = 1;
   var _res = [];
   var _client = new http.Client();
-  
+
   @override
   initState() {
     super.initState();
@@ -22,9 +22,10 @@ class HomeListState extends State<HomeList>{
 
   facheHomeData() async {
     print('get info');
-    String _homeurl = "https://cnodejs.org/api/v1/topics?page=${_page.toString()}";
+    String _homeurl =
+        "https://cnodejs.org/api/v1/topics?page=${_page.toString()}";
     http.Response respoens = await _client.get(_homeurl);
-    if(respoens.statusCode == 200) {
+    if (respoens.statusCode == 200) {
       var respoensBody = jsonDecode(respoens.body);
       if (respoensBody['success']) {
         setState(() {
@@ -50,7 +51,7 @@ class HomeListState extends State<HomeList>{
         ),
       );
     }
-    
+
     var _item = _res[index];
     var _tabText = {
       "ask": "问答",
@@ -60,50 +61,54 @@ class HomeListState extends State<HomeList>{
       "--": "奇怪的内容"
     };
 
-    if(index >= _res.length - 1) {
+    if (index >= _res.length - 1) {
       _page++;
       facheHomeData();
     }
 
-    return Container(
-      color: Colors.white,
-      margin: EdgeInsets.fromLTRB(6, 5, 6, 2),
-      padding: EdgeInsets.all(10),
-      height: 60,
-      child: Row(
-        children: <Widget>[
-          Image.network(_item['author']['avatar_url']),
-          SizedBox(width: 10,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.all(
-                const Radius.circular(2)
-              )
+    return GestureDetector(
+      onTap:() => Navigator.pushNamed(context, "/Topic",arguments: _item),
+      child: Container(
+        color: Colors.white,
+        margin: EdgeInsets.fromLTRB(6, 5, 6, 2),
+        padding: EdgeInsets.all(10),
+        height: 60,
+        child: Row(
+          children: <Widget>[
+            Image.network(_item['author']['avatar_url']),
+            SizedBox(
+              width: 10,
             ),
-            padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
-            child: Text(
-              _item['top'] ? "置顶" : _tabText[_item['tab']],
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontSize: 13
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.all(const Radius.circular(2))),
+              padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+              child: Text(
+                _item['top'] ? "置顶" : _tabText[_item['tab']],
+                style: TextStyle(color: Colors.grey[500], fontSize: 13),
               ),
             ),
-          ),
-          SizedBox(width: 10,),
-          Container(
-            width: 210,
-            child: Text(_item['title'],
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            SizedBox(
+              width: 10,
             ),
-          ),
-          SizedBox(width: 10,),
-        ],
+            Container(
+              width: 210,
+              child: Text(
+                _item['title'],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+          ],
+        ),
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
